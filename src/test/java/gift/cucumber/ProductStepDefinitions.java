@@ -3,8 +3,11 @@ package gift.cucumber;
 import io.cucumber.java.ko.그리고;
 import io.cucumber.java.ko.만약;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -29,6 +32,25 @@ public class ProductStepDefinitions {
                 "INSERT INTO product (name, price, image_url, category_id) VALUES (?, ?, ?, ?)",
                 productName, price, "http://example.com/image.png", categoryId
         );
+    }
+
+    @만약("{string} 카테고리에 가격 {int}원인 {string} 상품을 생성하면")
+    public void 카테고리에_가격_원인_상품을_생성하면(String categoryName, int price, String productName) {
+        Long categoryId = jdbcTemplate.queryForObject(
+                "SELECT id FROM category WHERE name = ?",
+                Long.class,
+                categoryName
+        );
+        sharedState.setResponse(RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(Map.of(
+                        "name", productName,
+                        "price", price,
+                        "imageUrl", "http://example.com/image.png",
+                        "categoryId", categoryId
+                ))
+                .when()
+                .post("/api/products"));
     }
 
     @만약("상품 목록을 조회하면")
@@ -61,10 +83,13 @@ public class ProductStepDefinitions {
     @만약("존재하지 않는 카테고리로 상품을 생성하면")
     public void 존재하지_않는_카테고리로_상품을_생성하면() {
         sharedState.setResponse(RestAssured.given()
-                .param("name", "떡볶이")
-                .param("price", 5000)
-                .param("imageUrl", "http://example.com/image.png")
-                .param("categoryId", 9999)
+                .contentType(ContentType.JSON)
+                .body(Map.of(
+                        "name", "떡볶이",
+                        "price", 5000,
+                        "imageUrl", "http://example.com/image.png",
+                        "categoryId", 9999
+                ))
                 .when()
                 .post("/api/products"));
     }
