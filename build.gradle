@@ -48,7 +48,19 @@ tasks.register('checkDb', Exec) {
 }
 
 tasks.register('cucumberTest', Test) {
-	description = 'Run Cucumber BDD tests with PostgreSQL'
+	description = 'Run Cucumber BDD tests against Docker containers'
+	group = 'verification'
+
+	useJUnitPlatform()
+	systemProperty 'spring.profiles.active', 'docker'
+
+	filter {
+		includeTestsMatching 'gift.cucumber.*'
+	}
+}
+
+tasks.register('cucumberLocalTest', Test) {
+	description = 'Run Cucumber BDD tests with embedded server and PostgreSQL'
 	group = 'verification'
 
 	dependsOn 'checkDb'
