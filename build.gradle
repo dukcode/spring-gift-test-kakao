@@ -37,9 +37,20 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+tasks.register('checkDb', Exec) {
+	description = 'Check and start PostgreSQL test container'
+	group = 'verification'
+
+	commandLine 'bash', 'scripts/check-db.sh'
+
+	ignoreExitValue = false
+}
+
 tasks.register('cucumberTest', Test) {
 	description = 'Run Cucumber BDD tests with PostgreSQL'
 	group = 'verification'
+
+	dependsOn 'checkDb'
 
 	useJUnitPlatform()
 	systemProperty 'spring.profiles.active', 'test'
