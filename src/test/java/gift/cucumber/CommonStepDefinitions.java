@@ -19,8 +19,17 @@ public class CommonStepDefinitions {
 
     @Before
     public void setUp() {
+        cleanUpDatabase();
         configuration.setUpRestAssured();
         sharedState.reset();
+    }
+
+    private void cleanUpDatabase() {
+        jdbcTemplate.execute("DELETE FROM wish");
+        jdbcTemplate.execute("DELETE FROM option");
+        jdbcTemplate.execute("DELETE FROM product");
+        jdbcTemplate.execute("DELETE FROM category");
+        jdbcTemplate.execute("DELETE FROM member");
     }
 
     @조건("{string} 카테고리가 등록되어 있다")
