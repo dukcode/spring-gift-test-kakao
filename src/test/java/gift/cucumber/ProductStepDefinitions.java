@@ -70,14 +70,14 @@ public class ProductStepDefinitions {
         sharedState.getResponse().then().body("", hasSize(size));
     }
 
-    @그리고("첫 번째 상품의 가격은 {int}이다")
-    public void 첫_번째_상품의_가격은_이다(int price) {
-        sharedState.getResponse().then().body("[0].price", equalTo(price));
+    @그리고("{int}번째 상품의 가격은 {int}이다")
+    public void n번째_상품의_가격은_이다(int index, int price) {
+        sharedState.getResponse().then().body("[" + (index - 1) + "].price", equalTo(price));
     }
 
-    @그리고("첫 번째 상품의 카테고리는 {string}이다")
-    public void 첫_번째_상품의_카테고리는_이다(String categoryName) {
-        sharedState.getResponse().then().body("[0].category.name", equalTo(categoryName));
+    @그리고("{int}번째 상품의 카테고리는 {string}이다")
+    public void n번째_상품의_카테고리는_이다(int index, String categoryName) {
+        sharedState.getResponse().then().body("[" + (index - 1) + "].category.name", equalTo(categoryName));
     }
 
     @만약("존재하지 않는 카테고리로 상품을 생성하면")
