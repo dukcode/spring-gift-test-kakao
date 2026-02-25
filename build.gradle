@@ -39,12 +39,10 @@ tasks.named('test') {
 }
 
 tasks.register('checkDb', Exec) {
-	description = 'Check and start PostgreSQL test container'
+	description = 'Start PostgreSQL test container and wait for healthcheck'
 	group = 'verification'
 
-	commandLine 'bash', 'scripts/check-db.sh'
-
-	ignoreExitValue = false
+	commandLine 'docker', 'compose', 'up', '-d', '--wait', 'postgres-test'
 }
 
 tasks.register('cucumberTest', Test) {
